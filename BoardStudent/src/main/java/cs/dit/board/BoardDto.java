@@ -2,6 +2,7 @@ package cs.dit.board;
 
 import java.sql.Date;
 
+// Data Transfer Object : 데이터 교환을 하기위해 사용하는 객체, 로직 x 순수한 데이터 객체 (getter&setter)
 public class BoardDto {
 	private int bcode;
 	private String subject;

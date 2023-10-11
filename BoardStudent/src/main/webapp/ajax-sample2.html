@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>ajax 실습 1</title>
+<script>
+	function sendData() {
+		var xhr = new XMLHttpRequest();
+		
+		xhr.onreadystatechange = function() {
+			if(this.readyState == 4) {
+				document.getElementById('myDiv').innerHTML = this.responseText;
+			}
+		};
+		
+		xhr.open("POST", "myText.txt", true);
+		xhr.send();
+	}
+</script>
+</head>
+<body>
+	<input type="button" name="myname" onclick="sendData();" value="XmlHttpRequest Send">
+	
+	<div id="myDiv">
+	</div>
+</body>
+</html>

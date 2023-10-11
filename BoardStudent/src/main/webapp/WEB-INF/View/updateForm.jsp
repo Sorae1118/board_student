@@ -18,7 +18,7 @@
 		BoardDto dto2 = dao.selectOne(bcode);
 		
 		pageContext.setAttribute("dto", dto2);
-		System.out.println(dto2.getFilename());
+		System.out.println(dto.getFilename());
 %> 
 <!DOCTYPE html>
 <html>
@@ -51,7 +51,7 @@
 				<th>regDate</th><td><input type="text" value="${dto.regDate}" name="regDate"></td>
 			</tr>
 			<tr>
-				<th>기존파일</th><td><a download href="/uploadfiles/${dto.filename }">${dto.filename }</a></td>
+				<th>기존파일</th><td><a download href="uploadfiles/${dto.filename }">${dto.filename }</a></td>
 				<th>변경파일</th><td><input type="file" class="form-control" id="filename" name="filename"></td>
 			</tr>
 			<tr>
@@ -64,6 +64,110 @@
 			</tr>
 		</table><br><br>
 	</form>
+</div>
+<script type="text/javascript">
+	var xhr1 = new XMLHttpRequest();
+	var xhr2 = new XMLHttpRequest();
+	
+	var bcode = document.getElementById("bcode").value;
+	
+	function cList() {
+		var commentsTable = document.getElementById("commentsTable");
+		commentsTable.innerHTML = "";
+		
+		xhr1.onreadystatechange = function() {
+			if(this.readyState == 4 && this.status == 200) {
+				console.log(this.responseText);
+				
+				var json = this.responseText;
+				var list = JSON.parse(json);
+				
+				for(var i in list) {
+					var row = commentsTable.insertRow();
+					var cell1 = row.insertCell(0);
+					var cell2 = row.insertCell(1);
+					var cell3 = row.insertCell(2);
+					cell1.innerHTML = list[i].ccode;
+					cell2.innerHTML = list[i].content;
+					cell3.innerHTML = list[i].regdate;
+				}
+			}
+		};
+		xhr1.open('POST', '/board-mvc-comments/cList.ct', true); //open(http 메서드 지정, 접속할 URL, 비동기 or 동기))
+		xhr1.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+		xhr1.send('bcode=' + bcode);
+	}
+	
+	function cInsert() {
+		var comments = document.getElementById("comments").value;
+		
+		xhr2.onreadystatechange = function() {
+			if(this.readyState == 4 && this.status == 200) {
+				document.getElementById("comments").value="";
+				cList();
+			}
+		};
+		
+		xhr2.open('POST', '/board-mvc-comments/cInsert.ct', true);
+		xhr2.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+		
+		var data = 'comments=' + comments + '&bcode=' + bcode;
+		xhr2.send(data);
+	}
+	
+	window.onload = function() { cList() };
+</script>
+
+<script type="text/javascript">
+	var bcode = $('#bcode').val();
+	
+	function cList() {
+		$.ajax({
+			url:'./cList.ct?bcode=' + bcode,
+			type: 'post',
+			async: true,
+			dataType: 'json',
+			success: function(data) {
+				var str = '';
+				
+				for(var i in data) {
+					str += '<tr><td>' + data[i].ccode + '<td>';
+					str += '<td>' + data[i].content + '<td>';
+					str += '<td>' + data[i].regdate + '<td><tr>';
+				}
+				$('#commentsTable').html(str);
+			}
+		});
+	}
+	
+	function cInsert() {
+		$.ajax({
+			url: './cInsert.ct?bcode=' + bcode,
+			type: 'post',
+			async: true,
+			data: {"comments":$('#comments').val()},
+			success: function (data) {
+				$('#comments').val('');
+				cList();
+			}
+		});
+	}
+	
+	window.onload = function(){cList();}
+
+</script>
+<div class="container">
+	<table class="table" style="text-align:center; border: 1px solid #ddddddd">
+		<tr>
+			<td style="background-color:#fafafa; text-align:center">댓글 : </td>
+			<td><input class="form-control" type="text" id="comments" size="80"></td>
+			<td colspan="2"><button class="btn btn-primary pull-right" onclick="cInsert();">한줄 댓글 작성</button></td>
+		</tr>
+	</table>
+	<table class="table" style="text-align:center; border:1px solid #dddddd">
+		<tbody id = "commentsTable">
+		</tbody>
+	</table>
 </div>
 </body>
 </html>

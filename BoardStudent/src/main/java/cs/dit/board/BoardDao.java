@@ -12,6 +12,7 @@ import javax.naming.InitialContext;
 import javax.naming.spi.DirStateFactory.Result;
 import javax.sql.DataSource;
 
+//Database에 접근하기 위한 로직 & 비즈니스 로직을 분리하기 위해 사용
 public class BoardDao {
 
 	/**======================================================================

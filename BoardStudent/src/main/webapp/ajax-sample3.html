@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script src="https://ajax.googlepis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+<title>ajax 실습 2</title>
+</head>
+<script type="text/javascript">
+var xhr = new XMLHttpRequest();
+
+function sendData() {
+	var table = document.getElementById("ajaxTable");
+	table.innerHTML = "";
+	
+	xhr.onreadystatechange = function() {
+		if(this.readyState == 4 && this.status == 200) {
+			var json = this.responseText;
+			
+			var list = JSON.parse(json);
+			
+			var i;
+			
+			for(i = 0 in list) {
+				var row = table.insertRow(0);
+				var cell1 = row.insertCell(0);
+				var cell2 = row.insertCell(1);
+				var cell3 = row.insertCell(2);
+				
+				cell1.innerHTML = list[i].id;
+				cell2.innerHTML = list[i].name;
+				cell3.innerHTML = list[i].pwd;
+			}
+		}
+	};
+	
+	xhr.open("POST", "list.do", true);
+	xhr.send();
+}
+</script>
+<body>
+	<div class="container">
+	<form name="myForm" method="post">
+		<input type="button" name="myname" onclick="sendData()" value="XmlHttpRequest Send">
+	</form>
+	<br><br>
+	
+	<table class="table" style="text-align:center; border:1px solid #dddddd">
+		<tr>
+			<th style="background-color:#fafafa; text-align:center">id</th>
+			<th style="background-color:#fafafa; text-align:center">name</th>
+			<th style="background-color:#fafafa; text-align:center">pwd</th>
+		</tr>
+		<tbody id="ajaxTable">
+		
+		</tbody>
+	</table>
+	</div>
+</body>
+</html>
